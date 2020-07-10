@@ -10,6 +10,11 @@ services:
       - ./container/db/data:/var/lib/postgresql/data:cached
     ports:
       - "5432:5432"
+  redis:
+    image: redis:5.0-alpine
+    command: redis-server --appendonly yes
+    ports:
+      - "6379:6379"
   rails:
     build:
       context: .
@@ -19,6 +24,7 @@ services:
       DB_NAME: rails_dev
       DB_USERNAME: dev
       DB_PASSWORD: password
+      REDIS_URL: redis://redis:6379
     entrypoint:
       - dockerize
       - -wait
@@ -32,3 +38,4 @@ services:
       - "127.0.0.1:3001:3000"
     depends_on:
       - db
+      - redis
