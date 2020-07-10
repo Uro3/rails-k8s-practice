@@ -13,12 +13,15 @@ services:
   rails:
     build:
       context: .
-      dockerfile: Dockerfile
     environment:
       DB_HOST: db
       DB_NAME: rails_dev
       DB_USERNAME: dev
       DB_PASSWORD: password
+    volumes:
+      - .:/app:cached
+      - public-data:/app/public
+      - tmp-data:/app/tmp
     entrypoint:
       - dockerize
       - -wait
@@ -27,8 +30,24 @@ services:
       - 60s
       - -wait-retry-interval
       - 3s
-    command: bundle exec rails s -p 3000 -b '0.0.0.0'
-    ports:
-      - "127.0.0.1:3001:3000"
+    command: bundle exec rails s
     depends_on:
       - db
+  nginx:
+    image: nginx:1.19-alpine
+    environment:
+      SERVER_NAME: localhost
+      APP_NAME: rails
+      ROOT_PATH: /app/public
+      SOCKET_PATH: /app/tmp/sockets/puma.sock
+    volumes:
+      - ./container/nginx/templates:/etc/nginx/templates
+      - public-data:/app/public
+      - tmp-data:/app/tmp
+    ports:
+      - "8000:80"
+    depends_on: 
+      - rails
+volumes:
+  public-data:
+  tmp-data:
