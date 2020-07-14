@@ -1,0 +1,19 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  namespace: rails-k8s-practice
+  name: db-setup
+spec:
+  template:
+    metadata:
+      name: db-setup
+    spec:
+      containers:
+      - name: db-setup
+        image: uro3/rails-k8s-practice-rails:latest
+        imagePullPolicy: Always
+        command: ["bundle", "exec", "rails", "db:setup"]
+        envFrom:
+          - configMapRef:
+              name: rails-config
+      restartPolicy: Never

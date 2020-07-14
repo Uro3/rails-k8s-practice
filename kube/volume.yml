@@ -1,0 +1,26 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  namespace: rails-k8s-practice
+  name: db-pv
+spec:
+  capacity:
+    storage: 1Gi
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: db-data
+  hostPath:
+    path: /tmp/volume-data
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  namespace: rails-k8s-practice
+  name: db-pvc
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+  storageClassName: db-data
