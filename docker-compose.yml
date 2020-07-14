@@ -13,6 +13,8 @@ services:
   rails:
     build:
       context: .
+      dockerfile: container/rails/Dockerfile
+    image: rails-k8s-practice-rails
     environment:
       DB_HOST: db
       DB_NAME: rails_dev
@@ -34,7 +36,10 @@ services:
     depends_on:
       - db
   nginx:
-    image: nginx:1.19-alpine
+    build:
+      context: .
+      dockerfile: container/nginx/Dockerfile
+    image: rails-k8s-practice-nginx
     environment:
       SERVER_NAME: localhost
       APP_NAME: rails
