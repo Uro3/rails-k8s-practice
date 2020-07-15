@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: rails-k8s-practice
+  name: web
+spec:
+  selector:
+    matchLabels:
+      app: web
+  template:
+    metadata:
+      labels:
+        app: web
+    spec:
+      containers:
+      - name: rails
+        image: uro3/rails-k8s-practice-rails:latest
+        imagePullPolicy: Always
+        command: ["bundle", "exec", "rails", "s"]
+        envFrom:
+          - configMapRef:
+              name: rails-config
+        volumeMounts:
+          - name: public
+            mountPath: /app/public
+          - name: tmp
+            mountPath: /app/tmp
+      - name: nginx
+        image: uro3/rails-k8s-practice-nginx:latest
+        env:
+          - name: SERVER_NAME
+            value: localhost
+          - name: APP_NAME
+            value: rails
+          - name: ROOT_PATH
+            value: /app/public
+          - name: SOCKET_PATH
+            value: /app/tmp/sockets/puma.sock
+        volumeMounts:
+          - name: public
+            mountPath: /app/public
+          - name: tmp
+            mountPath: /app/tmp
+        ports:
+        - containerPort: 80
+      volumes:
+        - name: public
+        - name: tmp
