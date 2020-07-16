@@ -1,4 +1,4 @@
-version: '3'
+version: '3.8'
 services:
   db:
     image: postgres:9.6-alpine
@@ -14,6 +14,7 @@ services:
     build:
       context: .
       dockerfile: container/rails/Dockerfile
+      target: development
     image: rails-k8s-practice-rails
     environment:
       DB_HOST: db
