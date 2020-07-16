@@ -15,7 +15,7 @@ services:
       context: .
       dockerfile: container/rails/Dockerfile
       target: development
-    image: rails-k8s-practice-rails
+    image: rails-k8s-practice-rails-dev
     environment:
       DB_HOST: db
       DB_NAME: rails_dev
