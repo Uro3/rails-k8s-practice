@@ -1,8 +1,9 @@
 # builder-base stage
 FROM ruby:2.6.6-alpine3.12 AS builder-base
 
-RUN apk upgrade --no-cache && \
-    apk add --update --no-cache \
+RUN apk update --no-cache --quiet && \
+    apk upgrade --no-cache --quiet && \
+    apk add --no-cache --quiet \
         nodejs \
         tzdata \
         build-base \
@@ -44,15 +45,17 @@ RUN bundle install -j$(getconf _NPROCESSORS_ONLN) --deployment --without test de
 
 COPY . $APP_ROOT/
 
-RUN bundle exec rake assets:precompile
+RUN bundle exec rails assets:precompile
 
 # main image
 FROM ruby:2.6.6-alpine3.12
 
 ARG APP_ROOT="/app"
 
-RUN apk upgrade --no-cache && \
-    apk add --update --no-cache \
+RUN apk update --no-cache --quiet && \
+    apk upgrade --no-cache --quiet && \
+    apk add --no-cache --quiet \
+        nodejs \
         tzdata \
         postgresql-client
 
